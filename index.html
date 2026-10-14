@@ -1,0 +1,1109 @@
+<!-- ==================== [START PART 1: HEAD & CORE CSS] ==================== -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#090e14">
+  <title>Dalmatian Coastal Concierge</title>
+  <style>
+    :root {
+      --bg: #090e14;
+      --surface: #121922;
+      --surface-card: #1a2330;
+      --border: rgba(255, 255, 255, 0.12);
+      --text-main: #f8fafc;
+      --text-dim: #94a3b8;
+      --gold: #e5b567;
+      --cyan: #38bdf8;
+      --relax: #f59e0b;
+      --relax-bg: rgba(245, 158, 11, 0.14);
+      --explore: #10b981;
+      --explore-bg: rgba(16, 185, 129, 0.14);
+      --danger: #ef4444;
+      --font-stack: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      height: -webkit-fill-available;
+      overflow: hidden;
+      font-family: var(--font-stack);
+      background: var(--bg);
+      color: var(--text-main);
+      overscroll-behavior-y: none;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    button, a, [onclick] {
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    #app {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100vh;
+      height: -webkit-fill-available;
+      height: 100dvh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header {
+      flex-shrink: 0;
+      background: rgba(18, 25, 34, 0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: max(12px, env(safe-area-inset-top)) 15px 12px;
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+      user-select: none;
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .app-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    .btn-sm {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      transition: transform 0.15s ease;
+    }
+    .btn-sm:active { transform: scale(0.95); }
+    .btn-sm.gold { border-color: var(--gold); color: var(--gold); background: rgba(229, 181, 103, 0.14); }
+    .btn-sm.danger { border-color: var(--danger); color: var(--danger); background: rgba(239, 68, 68, 0.14); }
+
+    .mood-row {
+      display: flex;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.45);
+      padding: 5px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .mood-btn {
+      flex: 1;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-dim);
+      padding: 9px 0;
+      font-size: 0.82rem;
+      font-weight: 800;
+      border-radius: 8px;
+      transition: all 0.25s ease;
+    }
+    .mood-btn.active-relax {
+      background: var(--relax-bg);
+      color: var(--relax);
+      border-color: rgba(245, 158, 11, 0.5);
+      box-shadow: 0 2px 10px rgba(245, 158, 11, 0.15);
+    }
+    .mood-btn.active-explore {
+      background: var(--explore-bg);
+      color: var(--explore);
+      border-color: rgba(16, 185, 129, 0.5);
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.15);
+    }
+
+    main {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .view-section {
+      position: absolute;
+      inset: 0;
+      display: none;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 15px 15px calc(35px + env(safe-area-inset-bottom)) 15px;
+    }
+    .view-section.active { display: block; }
+<!-- ==================== [END PART 1: HEAD & CORE CSS] ==================== -->
+/* ==================== [START PART 2: COMPONENT CSS] ==================== */
+    .section-heading {
+      font-size: 1.05rem;
+      color: var(--gold);
+      margin-bottom: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      user-select: none;
+    }
+
+    .mood-banner {
+      padding: 12px 14px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      font-size: 0.82rem;
+      line-height: 1.4;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.25s ease;
+    }
+    .mood-banner.relax {
+      background: var(--relax-bg);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fde68a;
+    }
+    .mood-banner.explore {
+      background: var(--explore-bg);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #a7f3d0;
+    }
+    .mood-banner-icon { font-size: 1.35rem; flex-shrink: 0; }
+
+    .info-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 12px;
+    }
+    .info-card h3 { margin: 0 0 6px 0; font-size: 1rem; color: #fff; }
+    .info-card p { margin: 0 0 8px 0; font-size: 0.85rem; color: var(--text-dim); line-height: 1.45; }
+    .info-card p:last-child { margin-bottom: 0; }
+
+    .action-link {
+      display: block;
+      width: 100%;
+      background: rgba(56, 189, 248, 0.14);
+      color: var(--cyan);
+      padding: 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-top: 10px;
+      text-align: center;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      user-select: none;
+    }
+
+    .timeline-card {
+      background: var(--surface-card);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border);
+      transition: transform 0.15s ease, border-color 0.2s ease;
+      user-select: none;
+    }
+    .timeline-card:active { transform: scale(0.98); border-color: var(--gold); }
+
+    .tc-hero {
+      position: relative;
+      height: 135px;
+      width: 100%;
+    }
+    .tc-img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+    .tc-grad {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(9,14,20,0.15) 0%, rgba(9,14,20,0.92) 100%);
+      pointer-events: none;
+    }
+    .tc-hero-text {
+      position: absolute;
+      bottom: 10px;
+      left: 12px;
+      right: 12px;
+      pointer-events: none;
+    }
+    .tc-tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 2px;
+    }
+    .tc-title { font-size: 1.18rem; font-weight: 800; color: #fff; }
+
+    .tc-mood-box {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .tc-mood-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      gap: 8px;
+    }
+    .tc-badge {
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .tc-badge.relax { background: var(--relax-bg); color: var(--relax); border: 1px solid rgba(245,158,11,0.35); }
+    .tc-badge.explore { background: var(--explore-bg); color: var(--explore); border: 1px solid rgba(16,185,129,0.35); }
+    .tc-plan-title { font-size: 0.92rem; font-weight: 800; color: #fff; }
+    .tc-plan-desc { font-size: 0.82rem; color: var(--text-dim); line-height: 1.45; margin-bottom: 8px; }
+    .tc-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tc-pill {
+      font-size: 0.7rem;
+      background: rgba(255, 255, 255, 0.06);
+      color: #cbd5e1;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .food-card { background: var(--surface-card); border-radius: 12px; overflow: hidden; margin-bottom: 16px; border: 1px solid var(--border); }
+    .food-img { width: 100%; height: 175px; object-fit: cover; display: block; }
+    .food-body { padding: 14px; }
+    .food-title { font-size: 1.1rem; font-weight: 800; color: #fff; margin-bottom: 3px; }
+    .food-hr { font-size: 0.75rem; color: var(--gold); font-weight: 700; margin-bottom: 8px; }
+    .food-desc { font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; }
+
+    .weather-widget {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--cyan);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+    .w-temp { font-size: 2.8rem; font-weight: 800; color: #fff; line-height: 1; }
+    .w-details { text-align: right; }
+    .w-cond { font-size: 1.05rem; color: var(--cyan); font-weight: 700; margin-bottom: 4px; }
+    .w-wind { font-size: 0.8rem; color: var(--text-dim); }
+
+    .phrase-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px; -webkit-overflow-scrolling: touch; user-select: none; }
+    .p-tab { flex-shrink: 0; background: var(--surface-card); border: 1px solid var(--border); color: var(--text-dim); padding: 8px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+    .p-tab.active { background: rgba(229, 181, 103, 0.18); border-color: var(--gold); color: var(--gold); }
+    .p-item { background: var(--surface-card); border: 1px solid var(--border); padding: 12px; border-radius: 10px; margin-bottom: 8px; }
+    .p-hr { font-size: 0.88rem; font-weight: 800; color: #fff; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .p-en { font-size: 0.8rem; color: var(--text-dim); font-style: italic; margin-bottom: 4px; }
+    .p-ph { font-size: 0.75rem; color: var(--cyan); font-weight: 600; }
+    .btn-speak { background: rgba(229, 181, 103, 0.16); border: 1px solid var(--gold); color: var(--gold); padding: 6px 12px; border-radius: 6px; font-size: 0.72rem; font-weight: 800; flex-shrink: 0; }
+    .btn-speak:active { transform: scale(0.92); }
+
+    .bottom-nav {
+      flex-shrink: 0;
+      display: flex;
+      background: rgba(18, 25, 34, 0.96);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      padding-bottom: max(8px, env(safe-area-inset-bottom));
+      z-index: 100;
+      user-select: none;
+    }
+    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 9px 0 5px 0; color: var(--text-dim); font-size: 0.65rem; font-weight: 700; }
+    .nav-item.active { color: var(--gold); }
+    .nav-icon { font-size: 1.2rem; margin-bottom: 3px; }
+
+    .takeover {
+      position: absolute;
+      inset: 0;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      background: #000;
+    }
+    .takeover.active { transform: translateY(0); }
+    .t-bg { position: absolute; inset: 0; background-size: cover; background-position: center; z-index: 1; }
+    .t-grad { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(9,14,20,0.65) 0%, rgba(9,14,20,0.2) 30%, rgba(9,14,20,0.92) 70%, rgba(9,14,20,0.98) 100%); z-index: 2; pointer-events: none; }
+    .t-header { position: absolute; top: 0; left: 0; right: 0; z-index: 10; padding: max(14px, env(safe-area-inset-top)) 15px; display: flex; justify-content: space-between; user-select: none; }
+    .t-btn { background: rgba(9, 14, 20, 0.7); border: 1px solid rgba(255, 255, 255, 0.35); color: #fff; padding: 9px 15px; border-radius: 20px; font-weight: 800; font-size: 0.8rem; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+    .t-body { position: relative; z-index: 10; padding: 15px 15px calc(25px + env(safe-area-inset-bottom)) 15px; max-height: 82vh; overflow-y: auto; }
+    .t-title { font-size: 1.65rem; font-weight: 800; color: #fff; line-height: 1.15; margin-bottom: 10px; }
+    .t-live-plan {
+      background: rgba(18, 25, 34, 0.88);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .t-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .t-action-btn {
+      background: rgba(18, 25, 34, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #fff;
+      padding: 13px 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+    }
+    .t-action-btn:active { transform: scale(0.96); }
+    .t-action-btn.wide { grid-column: span 2; justify-content: center; background: rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.45); color: #bae6fd; }
+
+    .sheet-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .sheet-overlay.active { opacity: 1; pointer-events: auto; }
+    .sheet-content {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-radius: 22px 22px 0 0;
+      padding: 18px 15px calc(28px + env(safe-area-inset-bottom)) 15px;
+      max-height: 82vh;
+      transform: translateY(100%);
+      transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .sheet-overlay.active .sheet-content { transform: translateY(0); }
+    .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-shrink: 0; user-select: none; }
+    .sheet-title { font-size: 1.05rem; font-weight: 800; color: #fff; }
+    .sheet-close { background: var(--surface-card); border: 1px solid var(--border); color: var(--text-dim); width: 34px; height: 34px; border-radius: 17px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; }
+    .sheet-body { overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1; }
+
+    .venue-item { background: var(--surface-card); padding: 12px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 10px; }
+    .v-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+    .v-name { font-size: 0.95rem; font-weight: 800; color: #fff; }
+    .v-score { font-size: 0.8rem; color: var(--gold); font-weight: 700; }
+    .v-desc { font-size: 0.84rem; color: var(--text-dim); line-height: 1.4; margin-bottom: 8px; }
+    .v-link { color: var(--cyan); font-size: 0.8rem; text-decoration: none; font-weight: 700; display: inline-block; }
+  </style>
+</head>
+<!-- ==================== [END PART 2: COMPONENT CSS] ==================== -->
+<!-- ==================== [START PART 3: HTML BODY & VIEWS] ==================== -->
+<body>
+  <div id="app">
+    <header>
+      <div class="top-row">
+        <button type="button" class="btn-sm gold" onclick="resetToBase()">🏨 Basecamp</button>
+        <div class="app-title">Dalmatian Guide</div>
+        <button type="button" class="btn-sm danger" onclick="openSOS()">🚨 SOS</button>
+      </div>
+      <div class="mood-row">
+        <button type="button" id="mood-relax" class="mood-btn active-relax" onclick="setMood('relax')">🍸 Relax & Lounge</button>
+        <button type="button" id="mood-explore" class="mood-btn" onclick="setMood('explore')">🧭 Explore & Walk</button>
+      </div>
+    </header>
+
+    <main>
+      <div id="view-route" class="view-section active">
+        <h2 class="section-heading" id="route-heading">Today's Lounge Itinerary</h2>
+        <div id="mood-banner" class="mood-banner relax">
+          <span class="mood-banner-icon" id="mb-icon">🍸</span>
+          <div id="mb-text"><strong>Relax & Lounge Mode:</strong> Showing step-free promenades, pine shade, sunbed concessions & seaside terraces for each stop.</div>
+        </div>
+        <div id="route-list"></div>
+      </div>
+
+      <div id="view-transit" class="view-section">
+        <h2 class="section-heading">Getting Around</h2>
+        <div class="info-card">
+          <h3>✈️ Airport Transfers (SPU)</h3>
+          <p>Pre-booked private transfers to Brela cost ~€90–110. Alternatively, take the Airport Shuttle to Split Central Bus Station (€8), then the Arriva/Promet intercity coach south to Brela (€7).</p>
+        </div>
+        <div class="info-card" style="border-left: 3px solid var(--danger);">
+          <h3>⚠️ The Magistrala Gotcha</h3>
+          <p>Intercity buses drop you at the 'Kričak' stop on the D8 highway above town. Be warned: it is an 8-minute walk down 84 steep stairs to reach the coast. Always book local taxis for door-to-door drops at Hotel Berulia reception.</p>
+        </div>
+        <div class="info-card">
+          <h3>🚕 Local Taxi Dialler</h3>
+          <p>Direct phone and WhatsApp links for local Riviera cab transfers:</p>
+          <a href="tel:+385976142824" class="action-link">📞 Taxi Cheap Ride (Brela)</a>
+          <a href="tel:+385991638488" class="action-link">📞 Baška Voda Drive Transfers</a>
+        </div>
+      </div>
+
+      <div id="view-dining" class="view-section">
+        <h2 class="section-heading">Local Gastronomy</h2>
+        <div id="food-list"></div>
+      </div>
+
+      <div id="view-weather" class="view-section">
+        <h2 class="section-heading">Live Weather & Sea</h2>
+        <div class="weather-widget">
+          <div class="w-temp" id="wt-temp">24°</div>
+          <div class="w-details">
+            <div class="w-cond" id="wt-cond">Checking Brela...</div>
+            <div class="w-wind" id="wt-wind">Wind: -- km/h</div>
+          </div>
+        </div>
+        <div class="info-card" style="border-left: 3px solid var(--gold);">
+          <h3>⛰️ Biokovo Shadow Clock</h3>
+          <p>Because the massive 1,762m Biokovo mountain sits directly behind the coast, direct sunlight vanishes from the beaches earlier than sunset, casting cool natural shade across the coves in the late afternoon.</p>
+        </div>
+        <div class="info-card" style="border-left: 3px solid var(--cyan);">
+          <h3>🌬️ The Adriatic Winds</h3>
+          <p><strong>Maestral:</strong> Friendly afternoon sea breeze from the northwest. Ideal for lounging and cooling the pine coves.</p>
+          <p><strong>Bura:</strong> Fierce, gusty mountain wind blowing out to sea. Cancels boat trips and ferries immediately.</p>
+        </div>
+      </div>
+
+      <div id="view-essentials" class="view-section">
+        <h2 class="section-heading">Logistics & Essentials</h2>
+        <div class="info-card">
+          <h3>🚻 Toilets & Showers</h3>
+          <p>Clean municipal toilets are spaced evenly along the Lungomare promenade. Beach showers require <strong>50-cent Euro coins</strong> to operate (~30 seconds of freshwater).</p>
+        </div>
+        <div class="info-card">
+          <h3>⚕️ Medical & Pharmacy</h3>
+          <p><strong>Nearest Pharmacy:</strong> Ljekarna Baška Voda (1.8km south along the flat promenade). English-speaking staff; stocks sea urchin tweezers, rehydration salts, and antihistamines.</p>
+          <p><strong>Urgent Care:</strong> Dom Zdravlja Makarska (12km south). Open 24/7 for walk-in medical emergencies.</p>
+        </div>
+        <button type="button" class="action-link" onclick="locateUserGoogle()">📍 Open My Current GPS Location in Maps</button>
+      </div>
+
+      <div id="view-phrases" class="view-section">
+        <h2 class="section-heading">Croatian Phrase Book</h2>
+        <div class="phrase-tabs">
+          <button type="button" class="p-tab active" data-tab="difficult" onclick="loadPhrases('difficult')">⚠️ Difficult Situations</button>
+          <button type="button" class="p-tab" data-tab="drinks" onclick="loadPhrases('drinks')">🍹 Drinks</button>
+          <button type="button" class="p-tab" data-tab="dining" onclick="loadPhrases('dining')">🍽️ Dining</button>
+          <button type="button" class="p-tab" data-tab="getting_around" onclick="loadPhrases('getting_around')">🚌 Transit</button>
+          <button type="button" class="p-tab" data-tab="swear" onclick="loadPhrases('swear')">🤬 Slang & Swearing</button>
+        </div>
+        <div id="phrase-list"></div>
+      </div>
+    </main>
+
+    <nav class="bottom-nav">
+      <div class="nav-item active" id="nav-route" onclick="switchTab('route')"><div class="nav-icon">📍</div>Route</div>
+      <div class="nav-item" id="nav-transit" onclick="switchTab('transit')"><div class="nav-icon">🚌</div>Transit</div>
+      <div class="nav-item" id="nav-dining" onclick="switchTab('dining')"><div class="nav-icon">🍽️</div>Food</div>
+      <div class="nav-item" id="nav-weather" onclick="switchTab('weather')"><div class="nav-icon">☀️</div>Weather</div>
+      <div class="nav-item" id="nav-essentials" onclick="switchTab('essentials')"><div class="nav-icon">🚻</div>Info</div>
+      <div class="nav-item" id="nav-phrases" onclick="switchTab('phrases')"><div class="nav-icon">🗣️</div>Phrases</div>
+    </nav>
+
+    <div id="takeover" class="takeover">
+      <div id="t-bg" class="t-bg"></div>
+      <div class="t-grad"></div>
+      <div class="t-header">
+        <button type="button" class="t-btn" onclick="closeTakeover()">← Back to Route</button>
+        <button type="button" class="t-btn" id="t-nav">↗ Open Maps</button>
+      </div>
+      <div class="t-body">
+        <h1 id="t-title" class="t-title"></h1>
+        <div id="t-live-plan" class="t-live-plan"></div>
+        <div class="t-actions" id="t-action-grid"></div>
+      </div>
+    </div>
+
+    <div id="bottom-sheet" class="sheet-overlay" onclick="closeSheet()">
+      <div class="sheet-content" onclick="event.stopPropagation()">
+        <div class="sheet-header">
+          <div id="sheet-title" class="sheet-title">Details</div>
+          <button type="button" class="sheet-close" onclick="closeSheet()">✕</button>
+        </div>
+        <div id="sheet-body" class="sheet-body"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+<!-- ==================== [END PART 3: HTML BODY & VIEWS] ==================== -->
+// ==================== [START PART 4: FOOD & STAGES 0-4] ====================
+    const FOOD_DB = [
+      { name: "Crni Rižot", hr: "Black Cuttlefish Risotto", img: "https://images.unsplash.com/photo-1594970425712-421714bc21ce?auto=format&fit=crop&w=800&q=80", desc: "A velvety, slow-cooked risotto dyed pitch black with cuttlefish ink, loaded with garlic, olive oil, and tender squid pieces. Very soft and gentle on the teeth." },
+      { name: "Dalmatinska Pašticada", hr: "Slow-Braised Beef & Gnocchi", img: "https://images.unsplash.com/photo-1549488344-1f9b8d2bd1f3?auto=format&fit=crop&w=800&q=80", desc: "The pinnacle of Dalmatian comfort food. Beef marinated in wine vinegar and aromatics, braised for hours with prunes and nutmeg, and served over soft, pillowy potato gnocchi." },
+      { name: "Meso Ispod Peke", hr: "Slow-Cooked Under the Iron Bell", img: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=800&q=80", desc: "Veal, lamb, or octopus placed in a pan with potatoes, covered by a domed iron bell (peka), and buried under glowing embers for 3+ hours until meltingly tender. Must be ordered 24h ahead." },
+      { name: "Brudet", hr: "Rich Fisherman's Stew & Polenta", img: "https://images.unsplash.com/photo-1551842525-45dcfbf0ed7d?auto=format&fit=crop&w=800&q=80", desc: "A fragrant, slow-simmered coastal fish stew in a tomato, wine, and garlic broth, ladled over a bed of soft, creamy polenta." },
+      { name: "Soparnik", hr: "Wood-Fired Swiss Chard Pie", img: "https://images.unsplash.com/photo-1627308595229-7830f5c92257?auto=format&fit=crop&w=800&q=80", desc: "UNESCO-protected heritage dish from the Poljica region near Omiš: thin pastry filled with Swiss chard and sweet onions, baked directly on hot hearth stones and brushed with garlic olive oil." },
+      { name: "Škampi na Buzaru", hr: "Garlic & White Wine Shellfish", img: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=800&q=80", desc: "Adriatic scampi or mussels flash-simmered in a broth of local olive oil, garlic, fresh parsley, breadcrumbs, and crisp white wine." },
+      { name: "Gemišt & Pošip", hr: "Island Whites & Terrace Spritzers", img: "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=800&q=80", desc: "Pošip is the premier crisp, aromatic white wine from Korčula. For daytime terrace sessions, order a 'Gemišt'—half dry white wine, half cold Jamnica sparkling mineral water." },
+      { name: "Plavac Mali", hr: "Full-Bodied Coastal Red", img: "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=800&q=80", desc: "Rich, sun-drenched red wine grown on the steep limestone slopes of Pelješac and Hvar, with notes of dark fig, sage, and black pepper." },
+      { name: "Pelinkovac Antique", hr: "Herbal Wormwood Digestif", img: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=800&q=80", desc: "The essential Croatian digestif. A complex, bittersweet herbal liqueur best ordered 's ledom i limunom' (over ice with a wedge of lemon) to settle the stomach." }
+    ];
+
+    const STAGES_PART_A = [
+      {
+        id: 0, name: "Hotel Berulia", sub: "Basecamp Hub • Brela", img: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80", wiki: "https://en.m.wikipedia.org/wiki/Brela", lat: 43.3644, lng: 16.9360,
+        relax: { title: "Pool Deck & Pine Terrace", text: "Padded infinity pool loungers with direct elevator access from the rooms. Shaded by fragrant Aleppo pines from 14:00 onwards with waiter service." },
+        explore: { title: "Lungomare Morning Walk & SUP", text: "Step onto the level coastal promenade extending north to Punta Rata (18 mins) or south to Baška Voda (15 mins). Glassy morning water is ideal for paddleboarding." },
+        bars: [
+          { name: "Punta Rata Beach Grill & Bar", dist: "On site", score: "4.7★", desc: "Seaside terrace directly beneath the pines; iced white coffee, cold draft beer, and light lunches." },
+          { name: "Caffe Bar Sol", dist: "180 m", score: "4.6★", desc: "Breezy promenade deck just below the hotel gardens; great for sunset Aperol spritzes." }
+        ],
+        loungers: [
+          { name: "Berulia Infinity Pool Deck", dist: "On site", score: "4.9★", desc: "Complimentary padded loungers, parasols, and towel service for hotel guests." },
+          { name: "Berulia Sea Plateau", dist: "Below hotel", score: "4.8★", desc: "Smooth stone sunbathing plateaus right above the water with ladder sea entry." }
+        ],
+        sights: [
+          { name: "Berulia Botanical Terraces", dist: "On site", score: "4.9★", desc: "Cascading Mediterranean gardens of lavender, rosemary, and olive groves winding down to the sea." }
+        ],
+        trails: [
+          { name: "Brela–Baška Voda Lungomare", dist: "Starts at gate", score: "4.8★", desc: "Flat, paved coastal walkway linking hidden coves under continuous pine canopy." }
+        ]
+      },
+      {
+        id: 1, name: "Punta Rata & Kamen Brela", sub: "The Iconic Pine Spit", img: "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=1200&q=80", wiki: "https://en.m.wikipedia.org/wiki/Punta_Rata", lat: 43.3725, lng: 16.9238,
+        relax: { title: "Step-Free Pine Grove Lounging", text: "An easy, 100% flat promenade stroll from Hotel Berulia. The deep Aleppo pine canopy reaches right to the pebbles, offering cool natural shade all day." },
+        explore: { title: "Kamen Brela Snorkeling & Vruja Cliffs", text: "Swim a lap around the famous pine-topped Brela Stone where the underwater limestone shelf drops to 6m, or hike north toward dramatic Vruja Bay." },
+        bars: [
+          { name: "Maestral Beach Bar", dist: "50 m", score: "4.7★", desc: "Shaded tables right behind the headland; cold Pošip by the glass and afternoon espresso." }
+        ],
+        loungers: [
+          { name: "Punta Rata Sunbed Concession", dist: "Beachfront", score: "4.6★", desc: "~€20 per lounger. Arrive before 10:00 for front-row spots facing Kamen Brela." },
+          { name: "Natural Pine Needle Canopy", dist: "Inland edge", score: "4.9★", desc: "Free shaded resting spots on flat ground right behind the pebble line." }
+        ],
+        sights: [
+          { name: "Kamen Brela (The Brela Stone)", dist: "Offshore", score: "5.0★", desc: "Brela's world-famous symbol: a rugged rock islet crowned with living pine trees." }
+        ],
+        trails: [
+          { name: "Jakiruša & Vruja Coastal Path", dist: "2.5 km North", score: "4.8★", desc: "Scenic coastal walk past quiet coves toward the dramatic cliffs of Vruja Bay." }
+        ]
+      },
+      {
+        id: 2, name: "Baška Voda", sub: "Bustling Marina Town", img: "https://images.unsplash.com/photo-1555886300-34988e404289?auto=format&fit=crop&w=1200&q=80", wiki: "https://en.m.wikipedia.org/wiki/Ba%C5%A1ka_Voda", lat: 43.3575, lng: 16.9483,
+        relax: { title: "Palm-Lined Marina Promenade", text: "A completely flat 15-minute walk south from Hotel Berulia. Wide marble quayside packed with gelaterias, deep-cushioned cocktail lounges, and harbor benches." },
+        explore: { title: "Gradina Hill & Bast Foothills", text: "Explore the Roman archaeological ruins on Gradina headland or hike the ancient stone mule tracks up to the mountain hamlet of Bast." },
+        bars: [
+          { name: "Obala Marina Lounge", dist: "Harbor front", score: "4.6★", desc: "Deep shaded sofas facing the moored yachts; great Gemišt and people-watching." }
+        ],
+        loungers: [
+          { name: "Nikolina Main Beach", dist: "South quayside", score: "4.5★", desc: "Blue-flag pebble beach with full sunbed concessions, ramps, and calm water." }
+        ],
+        sights: [
+          { name: "St. Nicholas Church & Sea Maiden Statue", dist: "Harbor point", score: "4.7★", desc: "Bronze sculpture on the breakwater looking back toward the Biokovo peaks." }
+        ],
+        trails: [
+          { name: "Bast Old Village Trail", dist: "2.2 km Uphill", score: "4.6★", desc: "Limestone path climbing through olive groves to a traditional stone village." }
+        ]
+      },
+      {
+        id: 3, name: "Biokovo Skywalk", sub: "1,228m Glass Mountain Balcony", img: "https://images.unsplash.com/photo-1627498762957-c8fb00d8b4e8?auto=format&fit=crop&w=1200&q=80", wiki: "https://en.m.wikipedia.org/wiki/Biokovo", lat: 43.2928, lng: 17.0494,
+        relax: { title: "Guided Mini-Bus Panorama Only", text: "Do not self-drive. Book an air-conditioned hotel mini-bus transfer straight to the viewing platform—step out onto the glass horseshoe with zero climbing required." },
+        explore: { title: "Ravna Vlaška & Sveti Jure Ridge", text: "Walk the high-altitude karst geological trail above the Skywalk or tackle the steep limestone ascent toward the 1,762m Sveti Jure summit." },
+        bars: [
+          { name: "Vrata Biokova Mountain Konoba", dist: "4 km below", score: "4.5★", desc: "Rustic mountain tavern along the park road serving cold drinks and hearty platters." }
+        ],
+        loungers: [],
+        sights: [
+          { name: "Nebeska Šetnica (The Skywalk)", dist: "Ravna Vlaška", score: "4.9★", desc: "Cantilevered glass walkway suspended 1,228m directly above the Makarska Riviera." }
+        ],
+        trails: [
+          { name: "Vošac Peak Trail", dist: "From park road", score: "4.9★", desc: "High mountain trail offering the single best eagle-eye view over Makarska and the islands." }
+        ]
+      },
+      {
+        id: 4, name: "Makarska Old Town", sub: "Venetian Riva & St. Peter", img: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200&q=80", wiki: "https://en.m.wikipedia.org/wiki/Makarska", lat: 43.2965, lng: 17.0178,
+        relax: { title: "Kačić Square & Venetian Harbor", text: "15 minutes by taxi from Brela. Completely level palm-fringed Riva and baroque stone square with shaded wine bars and gentle harbor breezes." },
+        explore: { title: "Sveti Petar & Osejava Cliffs", text: "Walk the forested Sveti Petar peninsula out to the 1884 lighthouse, or hike the dramatic Osejava pine cliffs south to Nugal Beach." },
+        bars: [
+          { name: "Špina Bar", dist: "Old Town Alley", score: "4.8★", desc: "Tucked into a cool stone alley behind the square; flights of Dalmatian wines and local cheese." },
+          { name: "Caffe Bar Romana", dist: "Riva", score: "4.6★", desc: "Prime harborfront terrace for morning coffee and pastries." }
+        ],
+        loungers: [
+          { name: "Donja Luka Bay", dist: "North of Harbor", score: "4.4★", desc: "Long, sheltered pebble bay with beach clubs, pedalos, and deep pine shade." }
+        ],
+        sights: [
+          { name: "Franciscan Monastery & Malacological Museum", dist: "Old Town", score: "4.7★", desc: "Peaceful 16th-century cloister housing a world-renowned collection of Adriatic sea shells." }
+        ],
+        trails: [
+          { name: "Osejava Forest Trail to Nugal", dist: "3 km Coastal", score: "4.9★", desc: "Spectacular cliffside forest path between Makarska and Tučepi." }
+        ]
+      }
+    ];
+// ==================== [END PART 4: FOOD & STAGES 0-4] ====================
+// ==================== [START PART 5: STAGES 5-10 & PHRASES] ====================
+    const STAGES_PART_B = [
+      {
+        id: 5, name: "Tučepi Marina", sub: "4km Tamarisk & Pine Strand", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80", wiki: "https://en.m.wikipedia.org/wiki/Tu%C4%8Depi", lat: 43.2642, lng: 17.0570,
+        relax: { title: "Flat 4km Seaside Promenade", text: "The longest, flattest beach walk on the Riviera. Zero stairs, shaded continuously by tamarisk and pine trees, with benches every 50 meters." },
+        explore: { title: "Gornji Tučepi Fortified Hamlets", text: "Hike into the olive-draped foothills to discover 18th-century stone defensive towers built against Ottoman raids." },
+        bars: [
+          { name: "Caffe Bar Marina", dist: "Yacht Basin", score: "4.7★", desc: "Right on the water's edge; chilled Pošip and artisan gelato." }
+        ],
+        loungers: [
+          { name: "Slatina Central Beach", dist: "Promenade", score: "4.7★", desc: "Fine pebbles, gentle entry into the sea, and plentiful sunbed rentals." }
+        ],
+        sights: [
+          { name: "Church of St. George (Sv. Juraj)", dist: "South Point", score: "4.8★", desc: "13th-century Romanesque chapel built over a Roman villa rustica by the sea." }
+        ],
+        trails: [
+          { name: "Šarići & Podpeć Foothill Loop", dist: "2 km Inland", score: "4.6★", desc: "Old stone paths linking historic mountain taverns." }
+        ]
+      },
+      {
+        id: 6, name: "Omiš & Cetina Canyon", sub: "Pirate Town & Emerald River", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80", wiki: "https://en.m.wikipedia.org/wiki/Omi%C5%A1", lat: 43.4435, lng: 16.6912,
+        relax: { title: "Flat River Boat Cruise & Sandy Beach", text: "Board a flat-bottomed wooden boat right from the bridge for an effortless glide through the 300m-high canyon walls, then relax on Velika Plaža's soft sand." },
+        explore: { title: "Mirabella & Fortica Pirate Fortresses", text: "Climb the stone steps up to the 13th-century Mirabella pirate lookout or hike the high ridge to Starigrad Fortica." },
+        bars: [
+          { name: "Radmanove Mlinice Garden", dist: "6 km up-river", score: "4.7★", desc: "Historic watermill garden shaded by giant plane trees right on the cool river." }
+        ],
+        loungers: [
+          { name: "Velika Plaža (Main Sandy Beach)", dist: "Town edge", score: "4.5★", desc: "Rare fine natural sand with very shallow, warm water entry—no water shoes needed." }
+        ],
+        sights: [
+          { name: "Mirabella Fortress (Peovica)", dist: "Above Old Town", score: "4.8★", desc: "Medieval pirate stronghold overlooking the narrow Cetina gorge." }
+        ],
+        trails: [
+          { name: "Fortica Summit Path", dist: "1.2 km Steep", score: "4.9★", desc: "Vigorous 45-minute climb to the 300m ridge fortress." }
+        ]
+      },
+      {
+        id: 7, name: "Split: Diocletian's Palace", sub: "1,700-Year-Old Roman Core", img: "https://images.unsplash.com/photo-1555990538-1e434f3c09f3?auto=format&fit=crop&w=1200&q=80", wiki: "https://en.m.wikipedia.org/wiki/Diocletian%27s_Palace", lat: 43.5082, lng: 16.4402,
+        relax: { title: "Palm Riva & Level Palace Substructures", text: "Drop off right at the flat waterfront Riva. Enter through the Brass Gate into the cool, shaded Roman substructures and central Peristyle courtyard with minimal steps." },
+        explore: { title: "Bell Tower & Marjan Forest Hill", text: "Climb the 57m Cathedral of St. Domnius bell tower or walk the stone staircase up Marjan Hill for sweeping views over the islands." },
+        bars: [
+          { name: "Kavoteka & Luxor Peristyle", dist: "Palace Core", score: "4.7★", desc: "Sip wine or espresso while seated on cushions directly on the ancient Roman colonnade steps." }
+        ],
+        loungers: [
+          { name: "Kašjuni Beach Lounge", dist: "3.5 km West", score: "4.6★", desc: "Upscale cove beneath Marjan peninsula with cushioned daybeds and cabanas." }
+        ],
+        sights: [
+          { name: "The Peristyle & Vestibule", dist: "Palace Center", score: "5.0★", desc: "Monumental Roman courtyard where traditional Dalmatian klapa singers perform acapella." }
+        ],
+        trails: [
+          { name: "Marjan Vidilica Viewpoint", dist: "800 m from Riva", score: "4.9★", desc: "Shaded stone steps climbing from the Veli Varoš quarter to Split's classic panorama." }
+        ]
+      },
+      {
+        id: 8, name: "Trogir: Stone Islet", sub: "Venetian UNESCO Island", img: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1200&q=80", wiki: "https://en.m.wikipedia.org/wiki/Trogir", lat: 43.5170, lng: 16.2514,
+        relax: { title: "100% Flat Island Promenade", text: "Trogir's medieval island core is completely flat and compact. Stroll the wide marble harborfront lined with palms and yacht moorings without climbing a single stair." },
+        explore: { title: "Kamerlengo Ramparts & Radovan's Portal", text: "Climb the 15th-century Venetian fortress battlements at the island's tip and inspect the intricate carvings of St. Lawrence Cathedral." },
+        bars: [
+          { name: "Caffe Bar Corte", dist: "Main Square", score: "4.8★", desc: "Tranquil stone courtyard tucked inside a historic palace." }
+        ],
+        loungers: [
+          { name: "Labadusa Bay (Čiovo)", dist: "4 km South", score: "4.7★", desc: "Crystal-clear cove across the bridge with shaded stone terraces and Laganini beach club." }
+        ],
+        sights: [
+          { name: "Cathedral of St. Lawrence", dist: "Pjaca Square", score: "4.9★", desc: "Master Radovan's 1240 Romanesque portal is one of the finest stone carvings in the Adriatic." }
+        ],
+        trails: [
+          { name: "Kamerlengo Castle Wall Walk", dist: "West Tip", score: "4.6★", desc: "Elevated walkway around the medieval sea fortress." }
+        ]
+      },
+      {
+        id: 9, name: "Hvar Town", sub: "Sunlit Venetian Island Port", img: "https://images.unsplash.com/photo-1599813296181-7925e01b3ddf?auto=format&fit=crop&w=1200&q=80", wiki: "https://en.m.wikipedia.org/wiki/Hvar", lat: 43.1729, lng: 16.4411,
+        relax: { title: "St. Stephen's Pjaca & Franciscan Cove", text: "Catamarans dock directly on the flat stone quayside. Lounge in the vast marble Pjaca square or follow the level waterfront path to shaded coves." },
+        explore: { title: "Španjola Fortress & Pakleni Water Taxi", text: "Hike the winding pine and agave trail up to the 16th-century Spanish Fortress or hop a wooden boat across to the Pakleni archipelago." },
+        bars: [
+          { name: "Ka'Lavanda Music Bar", dist: "Old Stone Alley", score: "4.8★", desc: "Craft lavender-infused cocktails served on cushions along ancient limestone steps." }
+        ],
+        loungers: [
+          { name: "Beach Club Hvar (Bonj 'les bains')", dist: "10 min flat walk", score: "4.7★", desc: "Iconic 1920s white stone colonnade over turquoise water with private pontoons." }
+        ],
+        sights: [
+          { name: "Hvar Arsenal & Historic Theatre (1612)", dist: "Harbor Edge", score: "4.9★", desc: "Europe's oldest public communal theatre built above a Venetian galley repair hall." }
+        ],
+        trails: [
+          { name: "Fortica (Španjola) Climb", dist: "20 min uphill", score: "4.9★", desc: "Switchback garden path leading to the fortress crowning the town." }
+        ]
+      },
+      {
+        id: 10, name: "Krka National Park", sub: "Travertine River Waterfalls", img: "https://images.unsplash.com/photo-1543886566-a36159c47012?auto=format&fit=crop&w=1200&q=80", wiki: "https://en.m.wikipedia.org/wiki/Krka_National_Park", lat: 43.8021, lng: 15.9734,
+        relax: { title: "Skradin Boat Cruise to the Falls", text: "Enter via picturesque Skradin town (not Lozovac) and take the calm 25-minute river boat straight to the base of Skradinski Buk, bypassing the steep canyon descent." },
+        explore: { title: "2km Suspended Wooden Boardwalk Loop", text: "Walk the full timber boardwalk circuit winding directly over rushing emerald travertine cascades, historic watermills, and trout pools." },
+        bars: [
+          { name: "Skradinski Buk Mill Terrace", dist: "Near lower bridge", score: "4.4★", desc: "Shaded riverside tables right beside the historic stone watermills." }
+        ],
+        loungers: [],
+        sights: [
+          { name: "Skradinski Buk Cascade", dist: "Lower Basin", score: "5.0★", desc: "17 terraced travertine waterfalls thundering into an emerald lagoon." }
+        ],
+        trails: [
+          { name: "Full Travertine Boardwalk Circuit", dist: "1.9 km Loop", score: "4.9★", desc: "Timber walkways crossing the river channels and viewing decks." }
+        ]
+      }
+    ];
+
+    const STAGES = STAGES_PART_A.concat(STAGES_PART_B);
+
+    const PHRASES = {
+      difficult: [
+        { hr: "Oprostite, mislim da ju je udarilo sunce u glavu.", en: "I'm sorry, I think she's had too much sun.", ph: "Oh-PROS-tee-teh, MEES-leem dah yoo yeh OO-dah-ree-lo SOON-tseh oo GLAH-voo." },
+        { hr: "Oprostite, imala je alergijsku reakciju na besplatni šank.", en: "I'm sorry, I think she's had a reaction to the all-inclusive bar.", ph: "Oh-PROS-tee-teh, ee-MAH-lah yeh ah-lehr-GEEY-skoo reh-AK-tsee-yoo nah BESS-plaht-nee SHAHNK." },
+        { hr: "Nije zlonamjerna, samo joj je pao šećer.", en: "She doesn't mean any harm, she's just not eaten.", ph: "NEE-yeh zloh-NAHM-yehr-nah, SAH-mo yoy yeh PAH-oh SHEH-chehr." },
+        { hr: "Molim vas, donesite kruha i krumpira prije nego što počne pivat.", en: "Please bring us some carbs before she starts singing.", ph: "MO-leem vahs, doh-NEH-see-teh KROO-ha ee KROOM-pee-rah PREE-yeh NEH-go shtoh POCH-neh PEE-vaht." },
+        { hr: "Može li bokal vode iz špine? Malo se gubi.", en: "Could we get a carafe of tap water? She's losing the plot.", ph: "MOH-zheh lee BOH-kahl VOH-deh eez SHPEE-neh? MAH-lo seh GOO-bee." },
+        { hr: "Nemojte je gledat u oči, samo dajte račun.", en: "Don't make eye contact, just give her the bill.", ph: "NEH-moy-teh yeh GLEH-daht oo OH-chee, SAH-mo DIE-teh RAH-choon." }
+      ],
+      drinks: [
+        { hr: "Dva hladna Pošipa, molim.", en: "Two cold glasses of local white (Pošip), please.", ph: "Dvah HLAHD-nah POH-shee-pah, MO-leem." },
+        { hr: "Litra domaćeg bijelog vina i bokal mineralne vode.", en: "A litre of house white wine and a jug of sparkling water (Gemišt).", ph: "LEET-rah doh-MAH-chehg BYEH-lohg VEE-nah ee BOH-kahl mee-neh-RAHL-neh VOH-deh." },
+        { hr: "Dupli Pelinkovac Antique, puno leda i kriška limuna.", en: "Double Pelinkovac Antique, lots of ice and a lemon slice.", ph: "DOOP-lee peh-LEEN-koh-vahts ahn-TEE-kweh, POO-no LEH-dah ee KREESH-kah LEE-moo-nah." },
+        { hr: "Samo tonik s limunom, netko mora vozit.", en: "Just a tonic water with lemon, someone has to drive.", ph: "SAH-mo TOH-neek ess LEE-moo-nohm, NEHT-ko MOH-rah VOH-zeet." }
+      ],
+      dining: [
+        { hr: "Imate li nešto mekano, poput njoka ili crnog rižota?", en: "Do you have something soft, like gnocchi or black risotto?", ph: "EE-mah-teh lee NESH-toh meh-KAH-no, POH-poot NYOH-kah ee-lee TSER-nog ree-ZHOH-tah?" },
+        { hr: "Molim vas, račun. Može li odvojeno?", en: "The bill, please. Can we pay separately?", ph: "MO-leem vahs, RAH-choon. MOH-zheh lee OHD-voy-eh-no?" },
+        { hr: "Primite li kartice ili je samo gotovina?", en: "Do you take cards or is it cash only?", ph: "PREE-mee-teh lee KAR-teet-seh ee-lee yeh SAH-mo goh-TOH-vee-nah?" },
+        { hr: "Može li malo više blitve s krumpirom?", en: "Could we have a bit more Swiss chard with potatoes?", ph: "MOH-zheh lee MAH-lo VEE-sheh BLEET-veh ess KROOM-pee-rohm?" }
+      ],
+      getting_around: [
+        { hr: "Gdje je stanica za autobus prema Splitu?", en: "Where is the bus stop towards Split?", ph: "Gdyeh yeh STAH-neet-sah zah ow-TOH-boos PREH-mah SPLEE-too?" },
+        { hr: "Koliko ima stepenica do plaže?", en: "How many stairs are there down to the beach?", ph: "KOH-lee-ko EE-mah steh-peh-NEET-sah doh PLAH-zheh?" },
+        { hr: "Je li ovaj put potpuno ravan?", en: "Is this path completely flat?", ph: "Yeh lee OH-vye poot POHT-poo-no RAH-vahn?" },
+        { hr: "Možete li nas ostaviti točno ispred recepcije hotela Berulia?", en: "Can you drop us right outside Hotel Berulia reception?", ph: "MOH-zheh-teh lee nahs oh-STAH-vee-tee TOCH-no ees-pred reh-TSEP-tsee-yeh ho-TEH-lah beh-ROO-lee-yah?" }
+      ],
+      swear: [
+        { hr: "Odjebi.", en: "Fuck off. (Short, sharp dismissal)", ph: "Od-YEH-bee." },
+        { hr: "Goni se u kurac.", en: "Fuck off. (Lit: Go to dick)", ph: "GOH-nee seh oo KOO-rahts." },
+        { hr: "Koji kurac?", en: "What the fuck?", ph: "KO-yee KOO-rahts." },
+        { hr: "Pizdo jedna.", en: "You twat / You c*nt.", ph: "PEEZ-doh YED-nah." },
+        { hr: "Koji si ti redikul.", en: "What an absolute twat/fool you are.", ph: "KO-yee see tee reh-DEE-kool." },
+        { hr: "Mrš.", en: "Get to fuck / Shoo. (Rolled 'R')", ph: "Mersh." },
+        { hr: "Jebiga.", en: "It is what it is / Tough luck.", ph: "YEH-bee-gah." },
+        { hr: "Boli me kurac.", en: "I couldn't care less.", ph: "BOH-lee meh KOO-rahts." }
+      ]
+    };
+// ==================== [END PART 5: STAGES 5-10 & PHRASES] ====================
+// ==================== [START PART 6: MOOD ENGINE & BOOT LOGIC] ====================
+    let currentMood = 'relax';
+    let currentStage = STAGES[0];
+
+    function renderRouteList() {
+      const routeList = document.getElementById('route-list');
+      const heading = document.getElementById('route-heading');
+      const banner = document.getElementById('mood-banner');
+      const mbIcon = document.getElementById('mb-icon');
+      const mbText = document.getElementById('mb-text');
+
+      if (heading) {
+        heading.innerText = currentMood === 'relax' ? "Today's Lounge Itinerary" : "Today's Explorer Itinerary";
+      }
+      if (banner && mbIcon && mbText) {
+        banner.className = 'mood-banner ' + currentMood;
+        mbIcon.innerText = currentMood === 'relax' ? '🍸' : '🧭';
+        mbText.innerHTML = currentMood === 'relax'
+          ? '<strong>Relax & Lounge Mode:</strong> Showing step-free promenades, pine shade, sunbed concessions & seaside terraces for each stop.'
+          : '<strong>Explore & Walk Mode:</strong> Showing coastal hikes, fortress climbs, snorkeling shelves & historic viewpoints for each stop.';
+      }
+
+      if (!routeList) return;
+      let html = '';
+      STAGES.forEach(function(s) {
+        const plan = currentMood === 'relax' ? s.relax : s.explore;
+        const badgeLabel = currentMood === 'relax' ? '🍸 Lounge Plan' : '🧭 Explore Plan';
+        const primaryCount = currentMood === 'relax' ? (s.bars ? s.bars.length : 0) : (s.sights ? s.sights.length : 0);
+        const secondaryCount = currentMood === 'relax' ? (s.loungers ? s.loungers.length : 0) : (s.trails ? s.trails.length : 0);
+        const pill1 = currentMood === 'relax' ? ('🍹 ' + primaryCount + ' Terrace' + (primaryCount === 1 ? '' : 's')) : ('🏛️ ' + primaryCount + ' Sight' + (primaryCount === 1 ? '' : 's'));
+        const pill2 = currentMood === 'relax' ? ('⛱️ ' + secondaryCount + ' Sunbed Spot' + (secondaryCount === 1 ? '' : 's')) : ('🥾 ' + secondaryCount + ' Trail' + (secondaryCount === 1 ? '' : 's'));
+
+        html += '<div class="timeline-card" onclick="openTakeover(' + s.id + ')">' +
+          '<div class="tc-hero">' +
+            '<img class="tc-img" src="' + s.img + '" alt="' + s.name + '" loading="lazy">' +
+            '<div class="tc-grad"></div>' +
+            '<div class="tc-hero-text">' +
+              '<span class="tc-tag">Stage ' + s.id + ' • ' + s.sub + '</span>' +
+              '<div class="tc-title">' + s.name + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="tc-mood-box">' +
+            '<div class="tc-mood-head">' +
+              '<span class="tc-plan-title">' + plan.title + '</span>' +
+              '<span class="tc-badge ' + currentMood + '">' + badgeLabel + '</span>' +
+            '</div>' +
+            '<div class="tc-plan-desc">' + plan.text + '</div>' +
+            '<div class="tc-pills">' +
+              '<span class="tc-pill">' + pill1 + '</span>' +
+              '<span class="tc-pill">' + pill2 + '</span>' +
+              '<span class="tc-pill">Tap for Venues & Map →</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      });
+      routeList.innerHTML = html;
+    }
+
+    function renderFoodList() {
+      const foodList = document.getElementById('food-list');
+      if (!foodList) return;
+      let html = '';
+      FOOD_DB.forEach(function(f) {
+        html += '<div class="food-card">' +
+          '<img class="food-img" src="' + f.img + '" alt="' + f.name + '" loading="lazy">' +
+          '<div class="food-body">' +
+            '<div class="food-title">' + f.name + '</div>' +
+            '<div class="food-hr">' + f.hr + '</div>' +
+            '<div class="food-desc">' + f.desc + '</div>' +
+          '</div>' +
+        '</div>';
+      });
+      foodList.innerHTML = html;
+    }
+
+    async function fetchWeather() {
+      try {
+        const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=43.3644&longitude=16.9360&current_weather=true');
+        const data = await res.json();
+        const cw = data.current_weather;
+        const tempEl = document.getElementById('wt-temp');
+        const windEl = document.getElementById('wt-wind');
+        const condEl = document.getElementById('wt-cond');
+
+        if (tempEl) tempEl.innerText = Math.round(cw.temperature) + '°';
+        if (windEl) windEl.innerText = 'Wind: ' + cw.windspeed + ' km/h';
+
+        let condText = 'Clear Adriatic Sky';
+        if (cw.weathercode > 0 && cw.weathercode <= 3) condText = 'Partly Cloudy';
+        if (cw.weathercode >= 45 && cw.weathercode <= 48) condText = 'Coastal Mist';
+        if (cw.weathercode >= 51 && cw.weathercode <= 67) condText = 'Light Rain';
+        if (cw.weathercode >= 95) condText = 'Thunderstorm';
+        if (condEl) condEl.innerText = condText;
+      } catch (e) {
+        const condEl = document.getElementById('wt-cond');
+        const windEl = document.getElementById('wt-wind');
+        if (condEl) condEl.innerText = 'Brela Typical (Offline)';
+        if (windEl) windEl.innerText = 'Light Maestral Breeze';
+      }
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.view-section').forEach(function(v) { v.classList.remove('active'); });
+      document.querySelectorAll('.nav-item').forEach(function(v) { v.classList.remove('active'); });
+      closeTakeover();
+      closeSheet();
+      const targetView = document.getElementById('view-' + tabId);
+      const targetNav = document.getElementById('nav-' + tabId);
+      if (targetView) targetView.classList.add('active');
+      if (targetNav) targetNav.classList.add('active');
+    }
+
+    function setMood(mood) {
+      currentMood = mood;
+      const rBtn = document.getElementById('mood-relax');
+      const eBtn = document.getElementById('mood-explore');
+      if (rBtn) rBtn.className = 'mood-btn' + (mood === 'relax' ? ' active-relax' : '');
+      if (eBtn) eBtn.className = 'mood-btn' + (mood === 'explore' ? ' active-explore' : '');
+
+      renderRouteList();
+
+      const takeover = document.getElementById('takeover');
+      if (takeover && takeover.classList.contains('active')) {
+        updateTakeoverUI();
+      }
+    }
+
+    function updateTakeoverUI() {
+      const livePlan = document.getElementById('t-live-plan');
+      const grid = document.getElementById('t-action-grid');
+      const data = currentMood === 'relax' ? currentStage.relax : currentStage.explore;
+      const badgeLabel = currentMood === 'relax' ? '🍸 TODAY\'S LOUNGE PLAN' : '🧭 TODAY\'S EXPLORER PLAN';
+      const badgeColor = currentMood === 'relax' ? 'var(--relax)' : 'var(--explore)';
+
+      if (livePlan) {
+        livePlan.innerHTML = '<div style="font-size:0.7rem; font-weight:800; color:' + badgeColor + '; margin-bottom:4px; letter-spacing:0.5px;">' + badgeLabel + '</div>' +
+          '<div style="font-size:1rem; font-weight:800; color:#fff; margin-bottom:4px;">' + data.title + '</div>' +
+          '<div style="font-size:0.84rem; color:var(--text-dim); line-height:1.45;">' + data.text + '</div>';
+      }
+
+      if (!grid) return;
+      if (currentMood === 'relax') {
+        grid.innerHTML =
+          '<button type="button" class="t-action-btn" onclick="openSheet(\'bars\')"><span>🍹</span> Terraces & Bars</button>' +
+          '<button type="button" class="t-action-btn" onclick="openSheet(\'loungers\')"><span>⛱️</span> Sunbeds & Shade</button>' +
+          '<button type="button" class="t-action-btn wide" onclick="openSheet(\'wiki\')"><span>📖</span> Read Wikipedia Guide</button>';
+      } else {
+        grid.innerHTML =
+          '<button type="button" class="t-action-btn" onclick="openSheet(\'sights\')"><span>🏛️</span> Points of Interest</button>' +
+          '<button type="button" class="t-action-btn" onclick="openSheet(\'trails\')"><span>🥾</span> Trails & Viewpoints</button>' +
+          '<button type="button" class="t-action-btn wide" onclick="openSheet(\'wiki\')"><span>📖</span> Read Wikipedia Guide</button>';
+      }
+    }
+
+    function resetToBase() {
+      switchTab('route');
+      openTakeover(0);
+      const vr = document.getElementById('view-route');
+      if (vr) vr.scrollTop = 0;
+    }
+
+    function openTakeover(id) {
+      currentStage = STAGES.find(function(s) { return s.id === id; }) || STAGES[0];
+      const bg = document.getElementById('t-bg');
+      const title = document.getElementById('t-title');
+      const navBtn = document.getElementById('t-nav');
+      const takeover = document.getElementById('takeover');
+
+      if (bg) bg.style.backgroundImage = "url('" + currentStage.img + "')";
+      if (title) title.innerText = currentStage.name;
+      if (navBtn) {
+        const mapUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + currentStage.lat + ',' + currentStage.lng;
+        navBtn.onclick = function() { window.open(mapUrl, '_blank'); };
+      }
+      updateTakeoverUI();
+      if (takeover) takeover.classList.add('active');
+    }
+
+    function closeTakeover() {
+      const t = document.getElementById('takeover');
+      if (t) t.classList.remove('active');
+    }
+
+    function openSheet(type) {
+      const title = document.getElementById('sheet-title');
+      const body = document.getElementById('sheet-body');
+      const sheet = document.getElementById('bottom-sheet');
+
+      if (['bars', 'loungers', 'sights', 'trails'].indexOf(type) !== -1) {
+        const list = currentStage[type] || [];
+        const titles = {
+          bars: '🍹 Shaded Terraces & Bars',
+          loungers: '⛱️ Sunbeds & Shore Access',
+          sights: '🏛️ Points of Interest',
+          trails: '🥾 Viewpoints & Trails'
+        };
+        if (title) title.innerText = titles[type];
+
+        let html = '';
+        if (list.length === 0) {
+          html = '<p style="color:var(--text-dim); font-style:italic; padding:10px 0;">No venues required here—focus on the main excursion plan above.</p>';
+        } else {
+          list.forEach(function(item) {
+            const q = encodeURIComponent(item.name + ' ' + currentStage.name + ' Croatia');
+            html += '<div class="venue-item">' +
+              '<div class="v-row"><span class="v-name">' + item.name + '</span><span class="v-score">' + item.dist + ' • ' + item.score + '</span></div>' +
+              '<div class="v-desc">' + item.desc + '</div>' +
+              '<a href="https://www.google.com/maps/search/?api=1&query=' + q + '" target="_blank" class="v-link">Open in Maps ↗</a>' +
+            '</div>';
+          });
+        }
+        if (body) body.innerHTML = html;
+      } else if (type === 'wiki') {
+        if (title) title.innerText = '📖 ' + currentStage.name;
+        if (body) {
+          body.innerHTML = '<iframe src="' + currentStage.wiki + '" style="width:100%; height:58vh; border:none; border-radius:10px; background:#fff;"></iframe>';
+        }
+      }
+      if (sheet) sheet.classList.add('active');
+    }
+
+    function closeSheet() {
+      const bs = document.getElementById('bottom-sheet');
+      if (bs) bs.classList.remove('active');
+    }
+
+    function openSOS() {
+      const title = document.getElementById('sheet-title');
+      const body = document.getElementById('sheet-body');
+      const sheet = document.getElementById('bottom-sheet');
+      if (title) title.innerText = '🚨 Croatia Emergency Dialler';
+      if (body) {
+        body.innerHTML =
+          '<a href="tel:112" style="display:block; background:rgba(239,68,68,0.16); color:var(--danger); border:1px solid rgba(239,68,68,0.45); padding:15px; border-radius:12px; font-weight:800; text-decoration:none; text-align:center; font-size:1.05rem; margin-bottom:10px;">📞 112 — General EU Emergency</a>' +
+          '<a href="tel:194" style="display:block; background:rgba(239,68,68,0.16); color:var(--danger); border:1px solid rgba(239,68,68,0.45); padding:15px; border-radius:12px; font-weight:800; text-decoration:none; text-align:center; font-size:1.05rem; margin-bottom:10px;">🚑 194 — Medical & Ambulance</a>' +
+          '<a href="tel:195" style="display:block; background:rgba(239,68,68,0.16); color:var(--danger); border:1px solid rgba(239,68,68,0.45); padding:15px; border-radius:12px; font-weight:800; text-decoration:none; text-align:center; font-size:1.05rem;">🚤 195 — Maritime Sea Rescue</a>';
+      }
+      if (sheet) sheet.classList.add('active');
+    }
+
+    function loadPhrases(cat) {
+      document.querySelectorAll('.p-tab').forEach(function(t) { t.classList.remove('active'); });
+      const activeBtn = document.querySelector('.p-tab[data-tab="' + cat + '"]');
+      if (activeBtn) activeBtn.classList.add('active');
+
+      let html = '';
+      (PHRASES[cat] || []).forEach(function(p) {
+        html += '<div class="p-item">' +
+          '<div class="p-hr"><span>' + p.hr + '</span><button type="button" class="btn-speak" onclick="speakPhrase(\'' + encodeURIComponent(p.hr) + '\')">🔊 Speak</button></div>' +
+          '<div class="p-en">"' + p.en + '"</div>' +
+          '<div class="p-ph">[' + p.ph + ']</div>' +
+        '</div>';
+      });
+      const listEl = document.getElementById('phrase-list');
+      if (listEl) listEl.innerHTML = html;
+    }
+
+    function speakPhrase(encodedText) {
+      const text = decodeURIComponent(encodedText);
+      if (!('speechSynthesis' in window)) {
+        alert('Pronunciation: ' + text);
+        return;
+      }
+      try {
+        const synth = window.speechSynthesis;
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (!isIOS && synth.speaking) {
+          synth.cancel();
+        }
+        const ut = new SpeechSynthesisUtterance(text);
+        ut.lang = 'hr-HR';
+        ut.rate = 0.85;
+        const voices = synth.getVoices ? synth.getVoices() : [];
+        const hrVoice = voices.find(function(v) { return v.lang && v.lang.toLowerCase().indexOf('hr') === 0; });
+        if (hrVoice) ut.voice = hrVoice;
+        synth.speak(ut);
+      } catch (err) {
+        alert(text);
+      }
+    }
+
+    function locateUserGoogle() {
+      if (!navigator.geolocation) {
+        window.open('https://www.google.com/maps/search/?api=1&query=43.3644,16.9360', '_blank');
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(function(pos) {
+        window.open('https://www.google.com/maps/search/?api=1&query=' + pos.coords.latitude + ',' + pos.coords.longitude, '_blank');
+      }, function() {
+        window.open('https://www.google.com/maps/search/?api=1&query=43.3644,16.9360', '_blank');
+      }, { enableHighAccuracy: true, timeout: 6000 });
+    }
+
+    function initApp() {
+      renderRouteList();
+      renderFoodList();
+      loadPhrases('difficult');
+      fetchWeather();
+      if ('speechSynthesis' in window && window.speechSynthesis.getVoices) {
+        window.speechSynthesis.getVoices();
+      }
+    }
+
+    initApp();
+  </script>
+</body>
+</html
+  
